@@ -22,6 +22,7 @@ Andrey Breslav, 2014
 - [Packages](#packages)
 - [Exceptions](#exceptions)
 - [Types](#types)
+- [Collections](#collections)
 
 ## References
 
@@ -361,3 +362,53 @@ fun main(args: Array<String>) {
   println(s1!!.length)
 }
 ```
+
+## Collections
+
+There are lists, sets and maps.
+
+```kotlin
+fun main(args: Array<String>) {
+  val list = listOf(1, 2, 3)
+  val set = setOf(1, 2, 3)
+  val map = mapOf(1 to "one", 2 to "two", 3 to "three")
+}
+```
+
+Kotlin has immutable and mutable collections.
+
+The default collections are immutable.
+
+```kotlin
+fun main(args: Array<String>) {
+  val list = listOf(1, 2, 3)
+  val set = setOf(1, 2, 3)
+  val map = mapOf(1 to "one", 2 to "two", 3 to "three")
+}
+```
+
+You can use the 'to' infix function to create pairs.
+
+A pair is a data class that holds two values, like a Tuple in other languages.
+
+```kotlin
+fun main(args: Array<String>) {
+  val pair = 1 to "one"
+}
+```
+
+In collections there are two nullability options.
+
+- The collection can be nullable.
+- The elements of the collection can be nullable.
+
+```kotlin
+fun main(args: Array<String>) {
+  val list: List<Int>? = null
+  val list2: List<Int?> = listOf(1, 2, null)
+}
+```
+
+The correspondence with Java collections is the following:
+
+![java-and-kotlin-collections.png](java-and-kotlin-collections.png)
