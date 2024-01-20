@@ -23,6 +23,7 @@ Andrey Breslav, 2014
 - [Exceptions](#exceptions)
 - [Types](#types)
 - [Collections](#collections)
+- [Classes](#classes)
 
 ## References
 
@@ -412,3 +413,59 @@ fun main(args: Array<String>) {
 The correspondence with Java collections is the following:
 
 ![java-and-kotlin-collections.png](java-and-kotlin-collections.png)
+
+## Classes
+
+You can use custom getters and setters.
+
+```kotlin
+class Person(val name: String, val age: Int) {
+  val isAdult get() = age = 18
+}
+
+fun main() {
+  val person = Person("Raul", 40)
+  println(person.isAdult)
+}
+
+class Person(val name: String, val age: Int) {
+  var age = age
+    set(value) {
+      if (value = 0) field = age
+    }
+}
+
+fun main() {
+  val person = Person("Raul", 40)
+  person.age = -1
+  println(person.age)
+}
+```
+
+In Kotlin, classes are final by default.
+
+```kotlin
+class Person
+```
+
+To make a class inheritable, you must use the 'open' keyword.
+
+```kotlin
+open class Person
+```
+
+Interfaces in Kotlin can contain declarations of abstract methods, as well as method
+implementations.
+
+```kotlin
+interface Person {
+  fun name(): String
+  fun age(): Int {
+    return 0
+  }
+}
+```
+
+The difference between abstract classes and interfaces is that abstract classes can have state.
+
+Also, a class can only inherit from one abstract class but can implement multiple interfaces.
