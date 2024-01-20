@@ -1,15 +1,15 @@
 # Kotlin
 
 > “Kotlin is a pragmatic programming language for the JVM and
-Android that combines OO and functional features and is
-focused on interoperability, safety, clarity, and tooling support.”
+> Android that combines OO and functional features and is
+> focused on interoperability, safety, clarity, and tooling support.”
 
 Andrey Breslav, 2016
 
 > "One of the most important use cases for Kotlin is a big
-Java codebase whose developers want a better language:
-you can mix Java and Kotlin freely and migration can be
-gradual and doesn't have to alter entire codebase.”
+> Java codebase whose developers want a better language:
+> you can mix Java and Kotlin freely and migration can be
+> gradual and doesn't have to alter entire codebase.”
 
 Andrey Breslav, 2014
 
@@ -52,7 +52,7 @@ Functions can have default values for parameters.
 
 ```kotlin
 fun sum(a: Int = 0, b: Int = 0): Int {
-    return a + b
+  return a + b
 }
 ```
 
@@ -60,11 +60,11 @@ Functions can have named parameters.
 
 ```kotlin
 fun sum(a: Int = 0, b: Int = 0): Int {
-    return a + b
+  return a + b
 }
 
 fun main(args: Array<String>) {
-    println(sum(a = 1, b = 2))
+  println(sum(a = 1, b = 2))
 }
 ```
 
@@ -72,11 +72,11 @@ We can interpolate variables in strings and use expressions in string templates.
 
 ```kotlin
 fun main(args: Array<String>) {
-    val a = 1
-    val s1 = "a is $a"
-    a = 2
-    val s2 = "${s1.replace("is", "was")}, but now is $a"
-    println(s2)
+  val a = 1
+  val s1 = "a is $a"
+  a = 2
+  val s2 = "${s1.replace("is", "was")}, but now is $a"
+  println(s2)
 }
 ```
 
@@ -86,7 +86,7 @@ By default, functions return `Unit` (void). We can omit the return type.
 
 ```kotlin
 fun printSum(a: Int, b: Int) {
-    println("sum of $a and $b is ${a + b}")
+  println("sum of $a and $b is ${a + b}")
 }
 ```
 
@@ -94,11 +94,11 @@ Functions can be declared inside other functions.
 
 ```kotlin
 fun main(args: Array<String>) {
-    fun sum(a: Int, b: Int): Int {
-        return a + b
-    }
+  fun sum(a: Int, b: Int): Int {
+    return a + b
+  }
 
-    println(sum(1, 2))
+  println(sum(1, 2))
 }
 ```
 
@@ -106,7 +106,7 @@ Functions can be declared as block body or expression body.
 
 ```kotlin
 fun sum(a: Int, b: Int): Int {
-    return a + b
+  return a + b
 }
 
 fun sum(a: Int, b: Int) = a + b
@@ -127,26 +127,26 @@ In Kotlin, `when` replaces `switch` in Java.
 
 ```kotlin
 fun describe(obj: Any): String =
-    when (obj) {
-        1 -> "One"
-        "Hello" -> "Greeting"
-        is Long -> "Long"
-        !is String -> "Not a string"
-        else -> "Unknown"
-    }
+  when (obj) {
+    1 -> "One"
+    "Hello" -> "Greeting"
+    is Long -> "Long"
+    !is String -> "Not a string"
+    else -> "Unknown"
+  }
 ```
 
 We can use objects in `when` statements, not only expressions.
 
 ```kotlin
 fun main(args: Array<String>) {
-    val x = 1
-    val y = 2
-    when (setOf(x, y)) {
-        setOf(0, 1) -> println("x or y is 0 or 1")
-        setOf(1, 2) -> println("x or y is 1 or 2")
-        else -> println("x or y is not 0 or 1")
-    }
+  val x = 1
+  val y = 2
+  when (setOf(x, y)) {
+    setOf(0, 1) -> println("x or y is 0 or 1")
+    setOf(1, 2) -> println("x or y is 1 or 2")
+    else -> println("x or y is not 0 or 1")
+  }
 }
 ```
 
@@ -154,10 +154,10 @@ We can use the for loop to iterate over anything that provides an iterator.
 
 ```kotlin
 fun main(args: Array<String>) {
-    val items = listOf("apple", "banana", "kiwifruit")
-    for (item in items) {
-        println(item)
-    }
+  val items = listOf("apple", "banana", "kiwifruit")
+  for (item in items) {
+    println(item)
+  }
 }
 ```
 
@@ -165,8 +165,56 @@ We can use ranges to iterate over numbers.
 
 ```kotlin
 fun main(args: Array<String>) {
-    for (x in 1..5) {
-        println(x)
-    }
+  for (x in 1..5) {
+    println(x)
+  }
+}
+```
+
+## Packages
+
+By default, Kotlin imports `kotlin.*`, `kotlin.annotation.*` and `kotlin.collections.*` packages.
+
+If you don't specify a package, your code goes into the default package.
+
+You can alias imports with `as` keyword.
+
+```kotlin
+import java.util.Random as Rnd
+```
+
+## Exceptions
+
+Kotlin doesn't have checked exceptions.
+
+“Examination of small programs leads to the conclusion that
+requiring exception specifications could both enhance
+developer productivity and enhance code quality, but
+experience with large software projects suggests a different
+result – decreased productivity and little or no increase in code
+quality.”
+
+Bruce Eckel, Thinking in Java
+
+```kotlin
+fun main(args: Array<String>) {
+  val percentage =
+    if (args.size > 0) args[0].toInt() else
+      throw IllegalArgumentException("Percentage expected")
+  println(percentage)
+}
+```
+
+Try is an expression. I.e. it returns a value.
+
+```kotlin
+fun main(args: Array<String>) {
+  val s = args[0]
+  val number = try {
+    Integer.parseInt(s)
+  } catch (e: NumberFormatException) {
+    null
+  }
+  println(number)
 }
 ```
