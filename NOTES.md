@@ -19,16 +19,21 @@ Andrey Breslav, 2014
 - [Variables](#variables)
 - [Functions](#functions)
 - [Control structures](#control-structures)
+- [Packages](#packages)
+- [Exceptions](#exceptions)
+- [Types](#types)
 
 ## References
 
-[Getting started](https://kotlinlang.org/docs/getting-started.html)
-[Kotlin in action](https://www.manning.com/books/kotlin-in-action)
+- [Getting started](https://kotlinlang.org/docs/getting-started.html)
+- [Kotlin in action](https://www.manning.com/books/kotlin-in-action)
 
 ## Variables
 
 In Kotlin, everything is an object in the sense that you can call member functions and properties on
-any variable. While certain types have an optimized internal representation as primitive values at
+any variable.
+
+While certain types have an optimized internal representation as primitive values at
 runtime (such as numbers, characters, booleans and others), they appear and behave like regular
 classes to you.
 
@@ -216,5 +221,143 @@ fun main(args: Array<String>) {
     null
   }
   println(number)
+}
+```
+
+## Types
+
+There aren't primitive types in Kotlin. Everything is an object.
+
+```kotlin
+fun main(args: Array<String>) {
+  val i: Int = 1
+  val l: Long = 1
+  val f: Float = 1.0f
+  val d: Double = 1.0
+  val b: Byte = 1
+  val s: Short = 1
+  val c: Char = 'a'
+  val bool: Boolean = true
+}
+```
+
+There is no implicit conversion between types. You must use explicit conversion.
+
+```kotlin
+fun main(args: Array<String>) {
+  val i: Int = 1
+  val l: Long = i.toLong()
+}
+```
+
+### Any
+
+The type 'Any' is the root of the Kotlin class hierarchy. Every Kotlin class has 'Any' as a
+superclass.
+
+It's like 'Object' in Java.
+
+The main difference is that 'Any' includes primitive types.
+
+All classes in Kotlin have 'equals', 'hashCode' and 'toString' methods due to being subclasses of
+'Any'.
+
+```kotlin
+fun main(args: Array<String>) {
+  val any: Any = 1
+  println(any)
+}
+```
+
+### Unit
+
+The type 'Unit' is the equivalent to 'void' in Java.
+
+It is returned implicitly by functions that don't return anything.
+
+The main difference with 'void' is that 'Unit' is a real class.
+So, it can be used as a type parameter or be used as a return type.
+
+```kotlin
+fun main(args: Array<String>) {
+  val unit: Unit = println("Hello")
+}
+```
+
+### Nothing
+
+The type 'Nothing' is a subtype of all types.
+
+It is used to indicate that a function never returns.
+
+It could be handy to use it for testing frameworks, code analysis tools, etc.
+
+```kotlin
+fun fail(message: String): Nothing {
+  throw IllegalArgumentException(message)
+}
+
+fun main(args: Array<String>) {
+  // The compiler is going to say that this is unreachable code.
+  val i = fail("Error")
+}
+```
+
+In Kotlin, the 'is' operator is used to check if an object is an instance of a type.
+
+```kotlin
+fun length(obj: Any): Int? {
+  if (obj is String) {
+    return obj.length
+  }
+  return null
+}
+
+fun len(x: Any) {
+  if (x !is String) return
+  println(x.length)
+}
+```
+
+### Nullability
+
+![java-npe-meme.png](java-npe-meme.png)
+
+In Java, there are several ways to deal with nullability.
+
+- You can check for null.
+- You can use the Optional class.
+- You can use annotations like @Nullable and @NotNull.
+- You can use IDE inspections.
+- You can use static analysis tools.
+- Etc.
+
+In modern languages, the tendency is to use the type system to deal with nullability.
+So the problem is solved at compile time not at runtime.
+
+In Kotlin, the type system distinguishes between references that can hold null (nullable references)
+and those that can not (non-null references).
+
+The '?' symbol is used to mark a type as nullable.
+
+```kotlin
+fun main(args: Array<String>) {
+  val s1: String = "abc"
+  val s2: String? = null
+}
+```
+
+You can use the '?.', '?:' (Elvis operator) and '!!' operators to deal with nullability.
+
+The '!!' operator returns a type as non-null or throws an exception if the value is null (NPE).
+
+```kotlin
+fun main(args: Array<String>) {
+  val s1: String? = "abc"
+  val s2: String? = null
+  println(s1?.length)
+  println(s2?.length)
+  println(s1?.length ?: 0)
+  println(s1!!.length)
 }
 ```
