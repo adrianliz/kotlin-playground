@@ -15,6 +15,8 @@ Andrey Breslav, 2014
 
 ## Index
 
+### Introduction
+
 - [References](#references)
 - [Variables](#variables)
 - [Functions](#functions)
@@ -24,6 +26,20 @@ Andrey Breslav, 2014
 - [Types](#types)
 - [Collections](#collections)
 - [Classes](#classes)
+
+### Advanced concepts
+
+- [Secondary constructors](#secondary-constructors)
+- [Object keyword](#object-keyword)
+- [Inner functions](#inner-functions)
+- [Extension functions](#extension-functions)
+- [Infix functions](#infix-functions)
+- [Data classes](#data-classes)
+- [Nested and inner classes](#nested-and-inner-classes)
+- [Sealed classes](#sealed-classes)
+- [Operator overloading](#operator-overloading)
+- [Delegation](#delegation)
+- [Coroutines](#coroutines)
 
 ## References
 
@@ -469,3 +485,301 @@ interface Person {
 The difference between abstract classes and interfaces is that abstract classes can have state.
 
 Also, a class can only inherit from one abstract class but can implement multiple interfaces.
+
+## Secondary constructors
+
+Classes in Kotlin can have one primary constructor and one or more secondary constructors.
+
+The primary constructor is part of the class header and can't have any code.
+You can use the 'init' block to put code in the primary constructor.
+
+```kotlin
+class Person(val name: String, val age: Int) {
+  init {
+    println("Person created with name $name and age $age")
+  }
+}
+```
+
+Secondary constructors are prefixed with the 'constructor' keyword.
+They must delegate to the primary constructor.
+
+```kotlin
+class Person(val name: String, val age: Int) {
+  constructor(name: String) : this(name, 0)
+}
+```
+
+## Object keyword
+
+With the 'object' keyword, you can create at the same time a class and an instance of that class.
+
+1. Object declarations (singletons)
+
+    - Thread-safe by default.
+
+    - Can have properties, methods, etc.
+
+    - Can not have constructors.
+
+    - It is initialized lazily (when accessed for the first time).
+
+   ```kotlin
+    object Singleton {
+       fun foo() = "foo"
+     }
+        
+     fun main() {
+       println(Singleton.foo())
+     }
+   ```
+
+2. Companion objects (static factory methods)
+
+    - Kotlin doesn't have static methods.
+    - Functions and variables at level package substitute static methods and variables.
+    - Functions and variables at level package can not access private members of a class.
+
+    ```kotlin
+    class Person(val name: String) {
+      companion object {
+        fun create(name: String) = Person(name)
+      }
+    }
+    
+    fun main() {
+      val person = Person.create("Raul")
+      println(person.name)
+    }
+    ```
+
+3. Object expressions (anonymous inner classes)
+
+    - Used as a replacement for anonymous inner classes in Java.
+    - Normally, they are used as function parameters.
+    - Can implement multiple interfaces.
+    - Can not have constructors.
+    - They aren't singletons.
+
+    ```kotlin
+      interface Person {
+        fun name(): String
+      }
+    
+      fun main() {
+        val person = object : Person {
+          override fun name() = "Raul"
+        }
+        println(person.name())
+      }
+    ```
+
+### Initialization
+
+1. Object declarations are initialized lazily (when accessed for the first time).
+2. Object companions are initialized when the class is loaded.
+3. Object expressions are initialized immediately, where they are used.
+
+## Inner functions
+
+In Kotlin, you can declare functions inside other functions.
+
+It is useful to encapsulate logic and avoid polluting the namespace.
+
+```kotlin
+fun main() {
+  fun foo() = "foo"
+  println(foo())
+}
+```
+
+## Extension functions
+
+Extension functions allow you to add new functionality to existing classes.
+
+```kotlin
+fun String.lastChar(): Char = this.get(this.length - 1)
+
+fun main() {
+  println("abc".lastChar())
+}
+```
+
+Could be useful to add new functionality to classes that you can't modify.
+
+```kotlin
+class User(val id: Int, val name: String, val address: String)
+
+fun User.validate() {
+  fun validateAttribute(attribute: String, value: String) {
+    if (value.isEmpty()) {
+      throw IllegalArgumentException("Can't save user $id: empty $attribute")
+    }
+  }
+  validateAttribute("Name", name)
+  validateAttribute("Address", address)
+}
+
+fun saveUser(user: User) {
+  user.validate()
+  println("User saved.")
+}
+
+fun main() {
+  val user = User(1, "Raul", "Madrid")
+  saveUser(user)
+}
+```
+
+## Infix functions
+
+Infix functions are functions that can be called without using the dot and the parentheses.
+
+```kotlin
+infix fun Int.plus(x: Int) = this + x
+
+fun main() {
+  println(1 plus 2)
+}
+```
+
+## Data classes
+
+Data classes are classes that are designed to hold data.
+They are basically sysntactic sugar to create POJOs.
+
+They have: equals, hashCode, toString, copy, destructuring, etc.
+
+```kotlin
+data class Person(val name: String, val age: Int)
+
+fun main() {
+  val person = Person("Raul", 40)
+  println(person)
+}
+```
+
+## Nested and inner classes
+
+A nested class is a class that is defined inside another class.
+
+It doesn't have access to the outer class instance.
+
+```kotlin
+class Outer {
+  class Nested {
+    fun foo() = "foo"
+  }
+}
+
+fun main() {
+  val nested = Outer.Nested().foo()
+}
+```
+
+An inner class is a nested class that is marked with the 'inner' keyword.
+
+It has access to the outer class instance.
+
+```kotlin
+class Outer {
+  private val bar: Int = 1
+  inner class Inner {
+    fun foo() = bar
+  }
+}
+
+fun main() {
+  val inner = Outer().Inner().foo()
+}
+```
+
+![nested-and-inner-classes.png](nested-and-inner-classes.png)
+
+## Sealed classes
+
+Sealed classes are used to represent restricted class hierarchies.
+
+They are useful when you want to restrict the type hierarchy.
+
+```kotlin
+sealed class Expr
+data class Const(val number: Double) : Expr()
+data class Sum(val e1: Expr, val e2: Expr) : Expr()
+object NotANumber : Expr()
+
+fun eval(expr: Expr): Double = when (expr) {
+  is Const -> expr.number
+  is Sum -> eval(expr.e1) + eval(expr.e2)
+  NotANumber -> Double.NaN
+}
+```
+
+## Operator overloading
+
+Java doesn't allow operator overloading.
+
+Kotlin allows you to overload operators.
+
+They are custom implementation of Kotlin operators.
+It similar to Javascript operator overloading.
+
+You can not overload '===' and '!==' operators.
+
+```kotlin
+data class Point(val x: Int, val y: Int) {
+  operator fun plus(other: Point) = Point(x + other.x, y + other.y)
+}
+
+fun main() {
+  val p1 = Point(1, 2)
+  val p2 = Point(3, 4)
+  println(p1 + p2)
+}
+```
+
+## Delegation
+
+Delegation is a mechanism by which an object can delegate one or more of its functions to other
+
+It is similar to inheritance, but it is more flexible.
+
+```kotlin
+interface Base {
+  fun foo()
+}
+
+class BaseImpl(val x: Int) : Base {
+  override fun foo() {
+    println(x)
+  }
+}
+
+class Derived(b: Base) : Base by b
+
+fun main() {
+  val b = BaseImpl(10)
+  Derived(b).foo()
+}
+```
+
+## Coroutines
+
+Coroutines are a Kotlin feature that converts async callbacks into sequential code.
+
+It's a function that can be suspended and resumed later.
+
+They are similar to Javascript promises or Java threads.
+
+The library that implements coroutines is called kotlinx.coroutines.
+
+```kotlin
+fun main() = runBlocking {
+  val job = launch {
+    delay(1000L)
+    println("World!")
+  }
+  println("Hello,")
+  job.join()
+}
+```
