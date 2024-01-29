@@ -40,6 +40,7 @@ Andrey Breslav, 2014
 - [Operator overloading](#operator-overloading)
 - [Delegation](#delegation)
 - [Coroutines](#coroutines)
+- [Scope functions](#scope-functions)
 
 ## References
 
@@ -684,6 +685,7 @@ It has access to the outer class instance.
 ```kotlin
 class Outer {
   private val bar: Int = 1
+
   inner class Inner {
     fun foo() = bar
   }
@@ -781,5 +783,137 @@ fun main() = runBlocking {
   }
   println("Hello,")
   job.join()
+}
+```
+
+## Scope functions
+
+Scope functions are functions that execute a block of code within the context of an object.
+They provide a temporary scope where you can access the object without its name.
+There are five scope functions: let, run, with, apply and also.
+
+The basic functionality of all of them is the same, to execute a block of code within the
+context of an object.
+They made the code more concise and readable.
+
+Inside the block, the object is referenced by 'this' or 'it'.
+'this' is the lambda receiver and 'it' is the lambda argument.
+
+### let
+
+```kotlin
+inline fun <T, R> T.let(block: (T) -> R): R
+```
+
+Calls the specified function block with this value as its argument and returns its result.
+
+Uses:
+
+- Executing a lambda on non-nullable objects
+- Introducing an expression as a variable in local scope: let
+
+```kotlin
+fun main() {
+  val person: Person? = Person("Raul", 40)
+  val name = person?.let {
+    println(it.name)
+    it.name
+  }
+  println(name)
+}
+```
+
+### with
+
+```kotlin
+inline fun <T, R> with(receiver: T, block: T.() -> R): R
+```
+
+Uses:
+
+- Grouping function calls on an object
+
+```kotlin
+fun getSomeObject(): Something {
+  val someObject = Something()
+  with(someObject) {
+    println("Value $value")
+    println("type $type")
+  }
+  return someObject
+}
+```
+
+### run
+
+```kotlin
+inline fun <R> run(block: () -> R): R
+
+inline fun <T, R> T.run(block: T.() -> R): R
+```
+
+Calls the specified function block and returns its result.
+Calls the specified function block with this value as its receiver and returns its result.
+
+Uses:
+
+- Calculating a return value based on multiple properties of an object
+- Running statements where an expression is required
+
+```kotlin
+fun getSomeObject(): String {
+  val someObject = Something()
+  val result = someObject.run {
+    value = "Some Value"
+    type = 1
+    "$value of type $type "
+  }
+  return result
+}
+```
+
+### apply
+
+```kotlin
+inline fun <T> T.apply(block: T.() -> Unit): T
+```
+
+Calls the specified function block with this value as its receiver and returns this value.
+
+Uses:
+
+- Object configuration
+
+```kotlin
+fun getSomeObject(): Something {
+  val someObject = Something()
+  someObject.apply {
+    value = "Some Value"
+    type = 1
+  }
+  return someObject
+}
+```
+
+### also
+
+```kotlin
+inline fun <T> T.also(block: (T) -> Unit): T
+```
+
+Calls the specified function block with this value as its argument and returns this value.
+
+Uses:
+
+- Additional actions on an object, logging, etc.
+
+```kotlin
+fun getSomeObject(): Something {
+  val someObject = Something()
+  someObject.also {
+    println("Value ${it.value}")
+    println("type ${it.type}")
+  }
+  return someObject
 }
 ```
