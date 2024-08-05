@@ -771,7 +771,7 @@ Coroutines are a Kotlin feature that converts async callbacks into sequential co
 
 It's a function that can be suspended and resumed later.
 
-They are similar to Javascript promises or Java threads.
+They implement the concept of structured concurrency
 
 The library that implements coroutines is called kotlinx.coroutines.
 
@@ -785,6 +785,10 @@ fun main() = runBlocking {
   job.join()
 }
 ```
+
+### Coroutine exception handling
+[Examples](src/main/kotlin/CoroutineExceptionHandling.kt)
+[Cheatsheet](https://www.lukaslechner.com/coroutines-exception-handling-cheat-sheet/)
 
 ## Scope functions
 
